@@ -1,6 +1,8 @@
 package com.example.aluno.aula2803;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +28,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         listViewTimes = (ListView) findViewById(R.id.listTimes);
 
-        String times[] = {"Flamengo", "ACP", "Internacional", "Avai"};
+        //String times[] = {"Flamengo", "ACP", "Internacional", "Avai"};
 
-        ArrayAdapter<String> adapterTimes =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,times);
+        //ArrayAdapter<String> adapterTimes =
+        //        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,times);
 
         List<Time> listaTimes = new ArrayList<>();
         listaTimes.add(new
@@ -39,6 +44,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         listViewTimes.setOnItemClickListener(this);
         listViewTimes.setOnItemLongClickListener(this);
+    }
+
+    public void gravarSP(View view){
+        //Buscar as preferencias desta Activity (MainActivity)
+        SharedPreferences sp = this.getPreferences(Context.MODE_PRIVATE);
+
+        //Buscar as preferências de desta/outras Activity - Passar o nome
+        //SharedPreferences sp =
+         //       this.getSharedPreferences("MainActivity", Context.MODE_PRIVATE)
+
+        SharedPreferences.Editor editor = sp.edit();
+        Gson gson = new Gson();
+
+        List<Time> times = new ArrayList<>();
+        times.add(new Time(1L,"ACP","Paranavaí",0));
+        times.add(new Time(2L,"Galo","Maringá",0));
+
+        String timesJson = gson.toJson(times);
+        Log.i("MainActivity",timesJson);
+
+        editor.putString("times",timesJson);
+        editor.putString("carro","Fiesta");
+        //editor.pu
+        editor.commit();
+    }
+
+    public void recuperarSP(View view){
+        SharedPreferences sp = this.getPreferences(Context.MODE_PRIVATE);
+        String carro = sp.getString("carro","não tem fiesta");
+
+        String timesJson = sp.getString("times","sem times");
+        Gson gson = new Gson();
+        List<Time> listaTimes = gson.fromJson(timesJson,
+                new TypeToken<List<Time>>(){}.getType());
+        Log.i("MainActivity",String.valueOf(listaTimes.size()));
+
+        Log.i("MainActivity",carro);
     }
 
     public void chamarSegundaTela(View view){
