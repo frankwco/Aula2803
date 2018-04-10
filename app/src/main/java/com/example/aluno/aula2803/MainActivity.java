@@ -1,8 +1,10 @@
 package com.example.aluno.aula2803;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,17 +35,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //ArrayAdapter<String> adapterTimes =
         //        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,times);
 
-        List<Time> listaTimes = new ArrayList<>();
-        listaTimes.add(new
-                Time(1L, "Gremio", "Porto", R.drawable.gremio));
 
-        AdapterTimes adapter = new AdapterTimes(this, listaTimes);
-
-        listViewTimes.setAdapter(adapter);
         //listViewTimes.setAdapter(adapterTimes);
 
         listViewTimes.setOnItemClickListener(this);
         listViewTimes.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        preencherLista();
+    }
+
+    public void preencherLista(){
+        List<Time> listaTimes = new ArrayList<>();
+        listaTimes  = new DAOTimes(this).buscarTodos();
+        AdapterTimes adapter = new AdapterTimes(this, listaTimes);
+        listViewTimes.setAdapter(adapter);
+    }
+
+    public void chamarFormulario(View view){
+        Intent intent = new Intent(this,FormularioTimes.class);
+        startActivity(intent);
     }
 
     public void gravarSP(View view){
@@ -95,11 +109,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.i("MainActivity", parent.getItemAtPosition(position).toString());
+
+        Time time = (Time) parent.getItemAtPosition(position);
+        Intent intent = new Intent(this, FormularioTimes.class);
+        intent.putExtra("id",time.getId());
+        startActivity(intent);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Log.i("MainActivity", parent.getItemAtPosition(position).toString());
-        return false;
+        final Time time = (Time) parent.getItemAtPosition(position);
+        final DAOTimes dao = new DAOTimes(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Deseja Excluir o Time??")
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dao.remover(time);
+                        preencherLista();
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+        builder.show();
+        return true;
     }
 }

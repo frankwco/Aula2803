@@ -10,6 +10,10 @@ public class Time {
     private String cidade;
     private int imagem;
 
+    public Time(){
+
+    }
+
     public Time(long id, String nome, String cidade,
                 int imagem) {
         this.id = id;
