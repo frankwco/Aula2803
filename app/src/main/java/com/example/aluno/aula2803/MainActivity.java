@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listViewTimes.setOnItemLongClickListener(this);
     }
 
+    public void chamarTelaImagem(){
+        Intent intent = new Intent(this, ApresentarImagem.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
