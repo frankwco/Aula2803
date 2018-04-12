@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listViewTimes.setOnItemLongClickListener(this);
     }
 
-    public void chamarTelaImagem(){
+    public void chamarTelaImagem(View view){
         Intent intent = new Intent(this, ApresentarImagem.class);
         startActivity(intent);
     }
@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void chamarFormulario(View view){
         Intent intent = new Intent(this,FormularioTimes.class);
+        startActivity(intent);
+    }
+
+    public void timesWS(View view){
+        Intent intent = new Intent(this,MostrarTimesWS.class);
         startActivity(intent);
     }
 
